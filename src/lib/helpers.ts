@@ -1,20 +1,20 @@
-import { NotionObject, Options, Attributes, PageDTO } from './types';
-import slugify from 'slugify';
+import { NotionObject, Options, Attributes, PageDTO } from "./types";
+import slugify from "slugify";
 
 // Seperator for good-looking HTML ;)
-const SEPERATOR = '';
+const SEPERATOR = "";
 
 // HTML Tag types
 const types = {
-  page: 'a',
-  text: 'p',
-  header: 'h1',
-  sub_header: 'h3',
-  sub_sub_header: 'h5',
-  divider: 'hr',
-  break: 'br',
-  numbered_list: 'ol',
-  bulleted_list: 'ul'
+  page: "a",
+  text: "p",
+  header: "h1",
+  sub_header: "h3",
+  sub_sub_header: "h5",
+  divider: "hr",
+  break: "br",
+  numbered_list: "ol",
+  bulleted_list: "ul",
 };
 
 /**
@@ -34,34 +34,34 @@ function formatToHtml(
   const customColor =
     color &&
     options.colors &&
-    ((options.colors as any)[color.split('_')[0]] || color);
+    ((options.colors as any)[color.split("_")[0]] || color);
   // Set content
   const content =
     properties &&
     properties.title &&
-    properties.title[0][0].replace(/\[.*\]:.{1,}/, '');
-  const tags = (content && content[0] ? content[0][0] : '').match(
+    properties.title[0][0].replace(/\[.*\]:.{1,}/, "");
+  const tags = (content && content[0] ? content[0][0] : "").match(
     /\[.{1,}\]: .{1,}/
   );
-  const attrib = tags && tags[0].replace(/(\[|\])/g, '').split(':');
+  const attrib = tags && tags[0].replace(/(\[|\])/g, "").split(":");
   if (attrib && attrib.length == 2) {
     return {
-      [attrib[0]]: attrib[1].trim()
+      [attrib[0]]: attrib[1].trim(),
     };
   }
 
   // Only set Style if passed
   const property =
-    customColor && color.includes('background')
-      ? `style="background-color:${customColor.split('_')[0]}"`
+    customColor && color.includes("background")
+      ? `style="background-color:${customColor.split("_")[0]}"`
       : `style="color:${customColor}"`;
 
   // Use ternary operator to return empty string instead of undefined
-  const style = color ? ` ${property}` : '';
+  const style = color ? ` ${property}` : "";
 
   // Set type to break if no content is existent
-  if (!content && type !== 'divider') {
-    type = 'break';
+  if (!content && type !== "divider") {
+    type = "break";
   }
   // Create HTML Tags with content
   switch (types[type]) {
@@ -100,39 +100,39 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
   for (let index = 0; index < ObjectList.length; index += 1) {
     const element = ObjectList[index];
     let html = formatToHtml(element, options, index);
-    if (html && typeof html === 'object') {
+    if (html && typeof html === "object") {
       const keys = Object.keys(html as Attributes);
-      keys.forEach(key => {
+      keys.forEach((key) => {
         attributes[key] = (html as Attributes)[key];
       });
     } else if (
       element &&
-      element.type.includes('list') &&
-      !element.type.includes('column')
+      element.type.includes("list") &&
+      !element.type.includes("column")
     ) {
       // If it the element is the first ul or ol element
       if (
         ObjectList[index - 1] &&
-        !ObjectList[index - 1].type.includes('list')
+        !ObjectList[index - 1].type.includes("list")
       ) {
         html = `<${types[element.type]}>${SEPERATOR}${html}`;
       }
       if (
         index + 1 >= ObjectList.length ||
-        (ObjectList[index + 1] && !ObjectList[index + 1].type.includes('list'))
+        (ObjectList[index + 1] && !ObjectList[index + 1].type.includes("list"))
       ) {
         html = `${html}${SEPERATOR}</${types[element.type]}>`;
       }
     }
-    if (typeof html === 'string') {
+    if (typeof html === "string") {
       items.push(html);
     }
   }
   const { format, properties } = ObjectList[0];
-  const title = (properties && properties.title[0][0]) || '';
+  const title = (properties && properties.title[0][0]) || "";
   const cover =
     format && format.page_cover
-      ? format.page_cover.includes('http')
+      ? format.page_cover.includes("http")
         ? format.page_cover
         : `https://www.notion.so${format.page_cover}`
       : null;
@@ -144,18 +144,18 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
       slug: slugify(title, { lower: true }),
       cover,
       teaser: items
-        .map(i =>
+        .map((i) =>
           i
-            .replace(/\[.{1,}\]: .{1,}/g, '')
-            .replace(/\<a.*\>*\<\/a\>/g, '')
-            .replace(/<[^>]*>/g, '')
+            .replace(/\[.{1,}\]: .{1,}/g, "")
+            .replace(/\<a.*\>*\<\/a\>/g, "")
+            .replace(/<[^>]*>/g, "")
         )
-        .filter(i => i)
-        .join(' ')
+        .filter((i) => i)
+        .join(" ")
         .trim()
         .substring(0, 200),
-      icon: format ? format.page_icon : null
-    }
+      icon: format ? format.page_icon : null,
+    },
   };
 }
 
@@ -169,16 +169,16 @@ function toHTMLPage(
   options: Options
 ): PageDTO {
   const { items, attributes } = formatList(ObjectList, options);
-  const elementsString = items.join('');
+  const elementsString = items.join("");
   return {
-    HTML: elementsString ? `<div>${elementsString}</div>` : '',
-    Attributes: { ...attributes, id: ObjectList[0].id }
+    HTML: elementsString ? `<div>${elementsString}</div>` : "",
+    Attributes: { ...attributes, id: ObjectList[0].id },
   };
 }
 
 export function handleNotionError(err: Error) {
-  if (err.message.includes('block')) {
-    console.error('Authentication Error: Please check your token!');
+  if (err.message.includes("block")) {
+    console.error("Authentication Error: Please check your token!");
   } else {
     console.error(err);
   }

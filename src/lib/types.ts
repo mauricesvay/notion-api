@@ -1,15 +1,15 @@
 export type NotionObject = {
   id: string;
   type:
-    | 'page'
-    | 'text'
-    | 'header'
-    | 'sub_header'
-    | 'sub_sub_header'
-    | 'divider'
-    | 'break'
-    | 'numbered_list'
-    | 'bulleted_list';
+    | "page"
+    | "text"
+    | "header"
+    | "sub_header"
+    | "sub_sub_header"
+    | "divider"
+    | "break"
+    | "numbered_list"
+    | "bulleted_list";
   properties: {
     title: Array<Array<string>>;
   };

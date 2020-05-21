@@ -1,11 +1,6 @@
-# Unofficial Notion.so API Wrapper (WIP)
+# Fork of Unofficial Notion.so API Wrapper (WIP)
 
-![npm](https://img.shields.io/npm/v/notion-api-js.svg)
-![npm bundle size](https://img.shields.io/bundlephobia/min/notion-api-js.svg)
-
-This repository contains an unofficial port of the [Notion](https://notion.so) API to Node.js. **Important**: It only works in the backend using Node.js and not in a client-side environment.
-
-**IMPORTANT**: You need a token to use the Notion API. You can obtain one by reading your local cookie. You can find instructions for that below.
+This is a fork of the Unofficial Notion.so API Wrapper, without Node-specific parts.
 
 # Documentation
 
@@ -18,7 +13,7 @@ This repository contains an unofficial port of the [Notion](https://notion.so) A
 
 # Installation
 
-You can either use `npm ` or `yarn ` to install it:
+You can either use `npm` or `yarn` to install it:
 
 ```
 npm i --save notion-api-js
@@ -42,7 +37,7 @@ import Notion from "notion-api-js";
 const Notion = require("notion-api-js").default;
 
 const notion = new Notion({
-  token: "YOUR_TOKEN_V2"
+  token: "YOUR_TOKEN_V2",
 });
 ```
 
@@ -121,12 +116,12 @@ By default it looks like this `/page?id=`, which results in `<a href="/page?id=S
 
 ## getPages()
 
-Gets all pages of the user by the userId passed to the `Notion ` instance. All pages are parsed to HTML.
+Gets all pages of the user by the userId passed to the `Notion` instance. All pages are parsed to HTML.
 
 **Example**
 
 ```js
-notion.getPages().then(pages => {
+notion.getPages().then((pages) => {
   // Your Code here
 });
 ```
@@ -144,7 +139,7 @@ Gets a Notion page by the pageId and returns the parsed HTML.
 **Example**
 
 ```js
-notion.getPageById("pageId").then(page => {
+notion.getPageById("pageId").then((page) => {
   // Your code here
 });
 ```
@@ -162,7 +157,7 @@ Gets a Notion page by the given pageId and all subpages of that page. Useful if 
 **Example**
 
 ```js
-notion.getPagesByIndexId("pageId").then(page => {
+notion.getPagesByIndexId("pageId").then((page) => {
   // Your code here
 });
 ```
@@ -172,7 +167,7 @@ notion.getPagesByIndexId("pageId").then(page => {
 Gets the HTML for all pages.
 
 ```js
-notion.getAllHTML().then(html => {
+notion.getAllHTML().then((html) => {
   // Your Ccode here
 });
 ```

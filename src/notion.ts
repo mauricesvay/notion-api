@@ -1,7 +1,6 @@
-import notionFetch from './lib/fetch';
-import makeHTML, { handleNotionError } from './lib/helpers';
-import { NotionResponse, Options, PageDTO } from './lib/types';
-import * as process from 'process';
+import notionFetch from "./lib/fetch";
+import makeHTML, { handleNotionError } from "./lib/helpers";
+import { NotionResponse, Options, PageDTO } from "./lib/types";
 
 /**
  * The Notion API Wrapper Class
@@ -18,17 +17,17 @@ class Notion {
     token,
     options = {
       colors: {},
-      pageUrl: '/page?id='
-    }
+      pageUrl: "/page?id=",
+    },
   }: {
     token: string;
-    options: Options;
+    options?: Options;
   }) {
-    const notionToken = token || process.env.NOTION_TOKEN;
+    const notionToken = token;
     if (!notionToken)
-      throw new Error('You need to provide the token to use the API');
+      throw new Error("You need to provide the token to use the API");
     this.creds = {
-      token: notionToken
+      token: notionToken,
     };
     this.options = options;
   }
@@ -37,7 +36,7 @@ class Notion {
    * Gets all PageIds from the user
    */
   getPages() {
-    return notionFetch({ endpoint: 'loadUserContent', creds: this.creds })
+    return notionFetch({ endpoint: "loadUserContent", creds: this.creds })
       .then((r: NotionResponse) => {
         const pages = r.recordMap.block;
         return Object.keys(pages);
@@ -54,13 +53,13 @@ class Notion {
    */
   getPageById(pageId: string) {
     return notionFetch({
-      endpoint: 'loadPageChunk',
+      endpoint: "loadPageChunk",
       creds: this.creds,
-      body: { pageId }
+      body: { pageId },
     })
       .then((r: NotionResponse) => {
         const entries = r.recordMap.block;
-        const values = Object.values(entries).map(value => {
+        const values = Object.values(entries).map((value) => {
           const { id, type, properties, format } = value.value;
           return { id, type, properties, format };
         });
@@ -80,13 +79,13 @@ class Notion {
    */
   async getPagesByIndexId(startingPageId: string) {
     return notionFetch({
-      endpoint: 'loadPageChunk',
+      endpoint: "loadPageChunk",
       creds: this.creds,
-      body: { pageId: startingPageId }
+      body: { pageId: startingPageId },
     })
       .then(async (r: NotionResponse) => {
         const entries = Object.values(r.recordMap.block).filter(
-          ({ value }) => value.type === 'page'
+          ({ value }) => value.type === "page"
         );
         return await Promise.all(
           entries.map(({ value }) => this.getPageById(value.id))
@@ -104,7 +103,9 @@ class Notion {
   async getAllHTML() {
     try {
       const pageIds = (await this.getPages()) as Array<string>;
-      const elems = await Promise.all(pageIds.map(id => this.getPageById(id)));
+      const elems = await Promise.all(
+        pageIds.map((id) => this.getPageById(id))
+      );
       return elems;
     } catch (error) {
       handleNotionError(error);
